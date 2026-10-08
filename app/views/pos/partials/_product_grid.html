@@ -1,0 +1,25 @@
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+    {{ range .ListProduk }}
+        {{/* TODO_MIGRATE: $url_img = !empty($produk['gambar']) ? base_url() . '/uploads/produk/' . $produk['gambar'] :  base_url() . '/assets/img/default-image.png'; */}}
+        <div class="col">
+            <a href="#"
+                hx-post="{{ site_url }}/pos/add_to_cart/{{ .ID }}"
+                hx-target="#cart-content"
+                hx-swap="innerHTML"
+                style="text-decoration: none; color: inherit;">
+                <div class="product-card card h-100">
+                    <img src="{{ .URLImg }}" style="height: 200px; object-fit: cover;" class="card-img-top" alt="{{ .NamaProduk }}">
+                    <div class="card-body">
+                        <h5 class="card-title fw-light fs-6">{{ .NamaProduk }}</h5>
+                        {{ if .Deskripsi }}
+                            <br>
+                            <p>{{ .Deskripsi }}</p>
+                        {{ end }}
+                        <br>
+                        <p class="fw-bold fs-4">Rp {{/* TODO_MIGRATE: echo number_format($produk['harga'], 0, ',', '.'); */}}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {{ end }}
+</div>

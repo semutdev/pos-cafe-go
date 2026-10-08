@@ -1,0 +1,234 @@
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .main-container {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pos-header {
+        flex-shrink: 0;
+    }
+
+    .pos-body {
+        flex-grow: 1;
+        overflow: hidden;
+    }
+
+    .product-grid-container {
+        height: calc(100vh - 120px);
+        overflow-y: auto;
+    }
+
+    .product-card {
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-section {
+        background-color: #ffffff;
+        height: calc(100vh - 56px);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .cart-items {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+
+    .cart-summary {
+        flex-shrink: 0;
+    }
+
+    #offcanvasCheckout {
+        --bs-offcanvas-height: 80vh;
+    }
+
+    .payment-option label {
+        display: block;
+        border: 1px solid #dee2e6;
+        border-radius: .375rem;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .payment-option input[type="radio"]:checked+label {
+        border-color: var(--bs-primary);
+        background-color: var(--bs-primary-bg-subtle);
+        box-shadow: 0 0 0 2px var(--bs-primary);
+    }
+
+    .payment-option input[type="radio"] {
+        display: none;
+    }
+</style>
+
+<!--begin::App Main-->
+<main class="app-main">
+    <div class="main-container">
+        <div class="pos-body">
+            <div class="row g-0">
+                <div class="col-lg-7 p-3">
+                    <form hx-post="{{ site_url }}/pos/filter_produk"
+                          hx-trigger="keyup changed delay:500ms, change"
+                          hx-target="#product-grid-container">
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input type="text" class="form-control" name="keyword" placeholder="Cari produk...">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" name="id_kategori">
+                                    <option value="">Semua Kategori</option>
+                                    {{ range .ListKategori }}
+                                        <option value="{{ .ID }}">{{ .NamaKategori }}</option>
+                                    {{ end }}
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="product-grid-container" id="product-grid-container">
+                        {{ template "/pos/partials/_product_grid.html" . }}
+                    </div>
+                </div>
+
+                <div class="col-lg-5 border-start">
+                    <div class="cart-section p-3" id="cart-content">
+                        {{ template "/pos/partials/_cart_view.html" . }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasCheckout"
+         aria-labelledby="offcanvasCheckoutLabel" style="--bs-offcanvas-height: 80vh;">
+      <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="offcanvasCheckoutLabel">Konfirmasi Pembayaran</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body" id="offcanvas-body-content">
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+      </div>
+    </div>
+
+</main>
+<!--end::App Main-->
+
+<script>
+     // handle event diskon updated
+    document.addEventListener('diskon_updated', function(evt){
+        $('.modal-backdrop').remove()
+    })
+
+    /**
+     * Fungsi untuk memformat angka menjadi string Rupiah dengan titik.
+     */
+    function formatNumber(n) {
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    /**
+     * Fungsi untuk mendapatkan nilai angka murni dari string Rupiah.
+     */
+    function getRawNumber(formattedValue) {
+        return formattedValue.replace(/[^,\d]/g, '').toString();
+    }
+
+    /**
+     * Event listener ini akan berjalan setiap kali ada perubahan pada Offcanvas.
+     */
+    document.body.addEventListener('htmx:afterSwap', function(event) {
+        // Cek apakah target swap adalah offcanvas body
+        if (event.detail.target.id === 'offcanvas-body-content') {
+            const cashDisplayInput = document.getElementById('cash-tendered-display');
+            if (cashDisplayInput) {
+                cashDisplayInput.addEventListener('input', function(e) {
+                    const rawValue = getRawNumber(e.target.value);
+                    const grandTotal = parseFloat(document.querySelector('input[name="grand_total"]').value) || 0;
+
+                    // Update input hidden dengan nilai angka murni
+                    document.getElementById('cash-tendered-hidden').value = rawValue;
+
+                    // Update input display dengan format Rupiah
+                    if(rawValue) {
+                        e.target.value = 'Rp ' + formatNumber(rawValue);
+                    } else {
+                        e.target.value = '';
+                    }
+
+                    // Hitung kembalian
+                    calculateChange(rawValue, grandTotal);
+                });
+            }
+        }
+    });
+
+    function calculateChange(cash, total) {
+        const changeDisplay = document.getElementById('change-display');
+        if (!changeDisplay) return;
+
+        const cashAmount = parseFloat(cash) || 0;
+        const change = cashAmount - total;
+
+        const formatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
+        changeDisplay.textContent = formatter.format(change > 0 ? change : 0);
+    }
+
+    document.body.addEventListener('alert_success', function(event){
+        const response = event.detail
+        // notifikasi sukses
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: response.message,
+            showConfirmButton: false,
+            timer: 1500
+        })
+
+        if (response.redirect != ''){
+            setTimeout(() => {
+                window.location.href = response.redirect;
+            }, 1000);
+        }
+    })
+
+    document.body.addEventListener('alert_error', function(event){
+        const response = event.detail
+        console.log(response)
+        // notifikasi sukses
+        Swal.fire({
+            icon: 'error',
+            title: 'Berhasil',
+            text: response.message,
+            showConfirmButton: false,
+            timer: 1500
+        })
+
+        if (response.redirect != ''){
+            setTimeout(() => {
+                window.location.href = response.redirect;
+            }, 1000);
+        }
+    })
+
+</script>

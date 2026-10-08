@@ -1,0 +1,20 @@
+
+A PHP Error was encountered
+
+Severity:    {{/* TODO_MIGRATE: echo $severity, "\n"; */}}
+Message:     {{/* TODO_MIGRATE: echo $message, "\n"; */}}
+Filename:    {{/* TODO_MIGRATE: echo $filepath, "\n"; */}}
+Line Number: {{ .Line }}
+
+{{/* TODO_MIGRATE: if (defined('SHOW_DEBUG_BACKTRACE') && SHOW_DEBUG_BACKTRACE === TRUE): */}}
+
+Backtrace:
+{{/* TODO_MIGRATE: foreach (debug_backtrace() as $error): */}}
+{{/* TODO_MIGRATE: if (isset($error['file']) && strpos($error['file'], realpath(BASEPATH)) !== 0): */}}
+	File: {{/* TODO_MIGRATE: echo $error['file'], "\n"; */}}
+	Line: {{/* TODO_MIGRATE: echo $error['line'], "\n"; */}}
+	Function: {{/* TODO_MIGRATE: echo $error['function'], "\n\n"; */}}
+{{/* TODO_MIGRATE: endif */}}
+{{/* TODO_MIGRATE: endforeach */}}
+
+{{/* TODO_MIGRATE: endif */}}

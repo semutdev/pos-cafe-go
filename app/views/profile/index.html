@@ -1,0 +1,262 @@
+
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <!--begin::Container-->
+    <div class="container-fluid">
+      <!--begin::Row-->
+      <div class="row">
+        <div class="col-sm-6">
+          <h3 class="mb-0">Profile</h3>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-end">
+            <li class="breadcrumb-item"><a href="{{ site_url }}/admin/dashboard">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+              Profile
+            </li>
+          </ol>
+        </div>
+      </div>
+      <!--end::Row-->
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <!--begin::Container-->
+    <div class="container-fluid">
+      <!--begin::Row-->
+      <div class="row">
+        <div class="col-12">
+          <!-- Success message -->
+          {{/* TODO_MIGRATE: if($this->session->flashdata('message')): */}}
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{/* TODO_MIGRATE: echo $this->session->flashdata('message'); */}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {{/* TODO_MIGRATE: endif; */}}
+          
+          <!-- Error message -->
+          {{/* TODO_MIGRATE: if($this->session->flashdata('error')): */}}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{/* TODO_MIGRATE: echo $this->session->flashdata('error'); */}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {{/* TODO_MIGRATE: endif; */}}
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-3">
+          <!-- Profile Image -->
+          <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+              <div class="text-center">
+                <img class="profile-user-img img-fluid img-circle"
+                     src="{{ base_url }}/assets/img/user.png"
+                     alt="User profile picture">
+              </div>
+
+              <h3 class="profile-username text-center">{{/* TODO_MIGRATE: echo $user->first_name . ' ' . $user->last_name; */}}</h3>
+
+              <p class="text-muted text-center">
+                {{/* TODO_MIGRATE: $groups = $this->ion_auth->get_users_groups($user->id)->result();
+                $group_names = array();
+                foreach ($groups as $group) {
+                    $group_names[] = $group->name;
+                }
+                echo implode(', ', $group_names); */}}
+              </p>
+
+              <ul class="list-group list-group-unbordered mb-3">
+                <li class="list-group-item">
+                  <b>Email</b> <a class="float-end">{{ .User.Email }}</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Phone</b> <a class="float-end">{{ .User.Phone }}</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Company</b> <a class="float-end">{{ .User.Company }}</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Last Login</b> <a class="float-end">{{/* TODO_MIGRATE: echo date('d M Y H:i', $user->last_login); */}}</a>
+                </li>
+              </ul>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+        
+        <div class="col-md-9">
+          <div class="card">
+            <div class="card-header p-2">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" href="#profile" data-bs-toggle="tab">Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="#password" data-bs-toggle="tab">Change Password</a></li>
+              </ul>
+            </div><!-- /.card-header -->
+            
+            <div class="card-body">
+              <div class="tab-content">
+                <!-- Profile Tab -->
+                <div class="active tab-pane" id="profile">
+                  <form action="{{ site_url }}/profile/update_profile" method="POST">
+                    <div class="form-group row mb-3">
+                      <label for="first_name" class="col-sm-2 col-form-label">First Name</label>
+                      <div class="col-sm-10">
+                        {{/* TODO_MIGRATE: echo form_input([
+                          'name' => 'first_name',
+                          'id' => 'first_name',
+                          'class' => 'form-control',
+                          'value' => set_value('first_name', $user->first_name)
+                        ]); */}}
+                        {{/* TODO_MIGRATE: echo form_error('first_name', '<div class="text-danger">', '</div>'); */}}
+                      </div>
+                    </div>
+                    
+                    <div class="form-group row mb-3">
+                      <label for="last_name" class="col-sm-2 col-form-label">Last Name</label>
+                      <div class="col-sm-10">
+                        {{/* TODO_MIGRATE: echo form_input([
+                          'name' => 'last_name',
+                          'id' => 'last_name',
+                          'class' => 'form-control',
+                          'value' => set_value('last_name', $user->last_name)
+                        ]); */}}
+                        {{/* TODO_MIGRATE: echo form_error('last_name', '<div class="text-danger">', '</div>'); */}}
+                      </div>
+                    </div>
+                    
+                    <div class="form-group row mb-3">
+                      <label for="email" class="col-sm-2 col-form-label">Email</label>
+                      <div class="col-sm-10">
+                        {{/* TODO_MIGRATE: echo form_input([
+                          'name' => 'email',
+                          'id' => 'email',
+                          'class' => 'form-control',
+                          'value' => set_value('email', $user->email),
+                          'readonly' => 'readonly'
+                        ]); */}}
+                        <small class="form-text text-muted">Email tidak dapat diubah</small>
+                      </div>
+                    </div>
+                    
+                    <div class="form-group row mb-3">
+                      <label for="phone" class="col-sm-2 col-form-label">Phone</label>
+                      <div class="col-sm-10">
+                        {{/* TODO_MIGRATE: echo form_input([
+                          'name' => 'phone',
+                          'id' => 'phone',
+                          'class' => 'form-control',
+                          'value' => set_value('phone', $user->phone)
+                        ]); */}}
+                        {{/* TODO_MIGRATE: echo form_error('phone', '<div class="text-danger">', '</div>'); */}}
+                      </div>
+                    </div>
+                    
+                    <div class="form-group row mb-3">
+                      <label for="company" class="col-sm-2 col-form-label">Company</label>
+                      <div class="col-sm-10">
+                        {{/* TODO_MIGRATE: echo form_input([
+                          'name' => 'company',
+                          'id' => 'company',
+                          'class' => 'form-control',
+                          'value' => set_value('company', $user->company)
+                        ]); */}}
+                        {{/* TODO_MIGRATE: echo form_error('company', '<div class="text-danger">', '</div>'); */}}
+                      </div>
+                    </div>
+                    
+                    <div class="form-group row">
+                      <div class="offset-sm-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <!-- /.tab-pane -->
+                
+                <!-- Password Tab -->
+                <div class="tab-pane" id="password">
+                  <form action="{{ site_url }}/profile/change_password" method="POST">
+                    <div class="form-group row mb-3">
+                      <label for="old" class="col-sm-3 col-form-label">Current Password</label>
+                      <div class="col-sm-9">
+                        {{/* TODO_MIGRATE: echo form_password([
+                          'name' => 'old',
+                          'id' => 'old',
+                          'class' => 'form-control'
+                        ]); */}}
+                        {{/* TODO_MIGRATE: echo form_error('old', '<div class="text-danger">', '</div>'); */}}
+                      </div>
+                    </div>
+                    
+                    <div class="form-group row mb-3">
+                      <label for="new" class="col-sm-3 col-form-label">New Password</label>
+                      <div class="col-sm-9">
+                        {{/* TODO_MIGRATE: echo form_password([
+                          'name' => 'new',
+                          'id' => 'new',
+                          'class' => 'form-control'
+                        ]); */}}
+                        {{/* TODO_MIGRATE: echo form_error('new', '<div class="text-danger">', '</div>'); */}}
+                        <small class="form-text text-muted">Password minimal {{/* TODO_MIGRATE: echo $this->config->item('min_password_length', 'ion_auth'); */}} karakter</small>
+                      </div>
+                    </div>
+                    
+                    <div class="form-group row mb-3">
+                      <label for="new_confirm" class="col-sm-3 col-form-label">Confirm New Password</label>
+                      <div class="col-sm-9">
+                        {{/* TODO_MIGRATE: echo form_password([
+                          'name' => 'new_confirm',
+                          'id' => 'new_confirm',
+                          'class' => 'form-control'
+                        ]); */}}
+                        {{/* TODO_MIGRATE: echo form_error('new_confirm', '<div class="text-danger">', '</div>'); */}}
+                      </div>
+                    </div>
+                    
+                    <div class="form-group row">
+                      <div class="offset-sm-3 col-sm-9">
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <!-- /.tab-pane -->
+              </div>
+              <!-- /.tab-content -->
+            </div><!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
+</main>
+<!--end::App Main-->
+
+<script>
+// Inisialisasi tab berdasarkan hash URL
+$(document).ready(function() {
+    // Cek apakah ada hash di URL
+    var hash = window.location.hash;
+    if (hash) {
+        $('.nav-pills a[href="' + hash + '"]').tab('show');
+    }
+    
+    // Update hash ketika tab berubah
+    $('.nav-pills a').on('shown.bs.tab', function (e) {
+        window.location.hash = e.target.hash;
+    });
+});
+</script>

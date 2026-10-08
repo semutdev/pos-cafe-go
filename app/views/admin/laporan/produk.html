@@ -1,0 +1,98 @@
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css">
+<!--begin::App Main-->
+<main class="app-main">
+    <!--begin::App Content Header-->
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">{{ .Title }}</h3>
+                <div class="d-flex gap-2">
+                    <div class="btn-group">
+                        <a href="{{ site_url }}/admin/laporan/produk?filter=today" class="btn {{ if eq .ActiveFilter "today" }}btn-primary{{ else }}btn-outline-primary{{ end }}">Hari Ini</a>
+                        <a href="{{ site_url }}/admin/laporan/produk?filter=this_week" class="btn {{ if eq .ActiveFilter "this_week" }}btn-primary{{ else }}btn-outline-primary{{ end }}">Minggu Ini</a>
+                        <a href="{{ site_url }}/admin/laporan/produk?filter=this_month" class="btn {{ if eq .ActiveFilter "this_month" }}btn-primary{{ else }}btn-outline-primary{{ end }}">Bulan Ini</a>
+                    </div>
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#custom-date-filter">
+                        <i class="bi bi-calendar3"></i> Filter Kustom
+                    </button>
+                </div>
+            </div>
+            <div class="collapse mt-3" id="custom-date-filter">
+                <div class="card card-body">
+                    <form class="row g-3 align-items-center">
+                        <input type="hidden" name="filter" value="custom">
+                        <div class="col-auto">
+                            <label for="start_date" class="form-label">Tanggal Mulai</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ .StartDate }}">
+                        </div>
+                        <div class="col-auto">
+                            <label for="end_date" class="form-label">Tanggal Selesai</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ .EndDate }}">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary mt-4">Terapkan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::App Content Header-->
+    <!--begin::App Content-->
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kode Produk</th>
+                                    <th>Nama Produk</th>
+                                    <th>Total Terjual</th>
+                                    <th>Total Pendapatan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{ if .LaporanProduk }}
+                                    {{/* TODO_MIGRATE: $no = 1; foreach ($laporan_produk as $laporan): */}}
+                                        <tr>
+                                            <td>{{/* TODO_MIGRATE: $no++ */}}</td>
+                                            <td>{{ .Laporan.CodeProduk }}</td>
+                                            <td>{{ .Laporan.NamaProduk }}</td>
+                                            <td>{{ .Laporan.TotalTerjual }}</td>
+                                            <td class="text-end">Rp {{/* TODO_MIGRATE: number_format($laporan['total_pendapatan'], 0, ',', '.') */}}</td>
+                                        </tr>
+                                    {{/* TODO_MIGRATE: endforeach; */}}
+                                {{ else }}
+                                    <tr>
+                                        <td colspan="5" class="text-center">Tidak ada data penjualan pada periode ini.</td>
+                                    </tr>
+                                {{ end }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::App Content-->
+</main>
+<!--end::App Main-->
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+
+<script>
+    $(document).ready(function(){
+        {{/* TODO_MIGRATE: if (count($laporan_penjualan) > 0): */}}
+        $('#datatable').DataTable({
+            "responsive": true,
+            "order": [[3, 'desc']] // Urutkan berdasarkan total terjual
+        });
+        {{/* TODO_MIGRATE: endif; */}}
+        
+    });
+</script>

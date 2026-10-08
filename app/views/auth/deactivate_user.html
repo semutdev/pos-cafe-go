@@ -1,0 +1,18 @@
+<h1>{{/* TODO_MIGRATE: echo lang('deactivate_heading'); */}}</h1>
+<p>{{/* TODO_MIGRATE: echo sprintf(lang('deactivate_subheading'), $user->{$identity}); */}}</p>
+
+<form action="{{ site_url }}/auth/deactivate/{{ .User.ID }}" method="POST">
+
+  <p>
+  	{{/* TODO_MIGRATE: echo lang('deactivate_confirm_y_label', 'confirm'); */}}
+    <input type="radio" name="confirm" value="yes" checked="checked" />
+    {{/* TODO_MIGRATE: echo lang('deactivate_confirm_n_label', 'confirm'); */}}
+    <input type="radio" name="confirm" value="no" />
+  </p>
+
+  {{/* TODO_MIGRATE: echo form_hidden($csrf); */}}
+  {{/* TODO_MIGRATE: echo form_hidden(['id' => $user->id]); */}}
+
+  <p>{{/* TODO_MIGRATE: echo form_submit('submit', lang('deactivate_submit_btn')); */}}</p>
+
+</form>

@@ -1,0 +1,48 @@
+<table class="table table-bordered">
+    <tr>
+        <th>Kode Produk</th>
+        <td>{{ .Produk.CodeProduk }}</td>
+    </tr>
+    <tr>
+        <th>Nama Produk</th>
+        <td>{{ .Produk.NamaProduk }}</td>
+    </tr>
+    <tr>
+        <th>Kategori</th>
+        <td>{{ .Produk.NamaKategori }}</td>
+    </tr>
+    <tr>
+        <th>Harga</th>
+        <td>{{ currency .Produk.Harga }}</td>
+    </tr>
+    <tr>
+        <th>Stok</th>
+        <td>{{ .Produk.Stok }}</td>
+    </tr>
+    <tr>
+        <th>Deskripsi</th>
+        <td>{{ if .Produk.Deskripsi }}{{ .Produk.Deskripsi }}{{ else }}-{{ end }}</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>{{ if .Produk.IsActive }}<span class="badge bg-success">Aktif</span>{{ else }}<span class="badge bg-danger">Nonaktif</span>{{ end }}</td>
+    </tr>
+    <tr>
+        <th>Gambar</th>
+        <td>
+            {{ if .Produk.Gambar }}
+                <img src="{{ base_url }}/uploads/produk/{{ .Produk.Gambar }}" alt="{{ .Produk.NamaProduk }}" class="img-fluid" style="max-height: 200px;">
+            {{ else }}
+                <span class="text-muted">Tidak ada gambar</span>
+            {{ end }}
+        </td>
+    </tr>
+    <tr>
+        <th>Dibuat pada</th>
+        <td>{{ format_date .Produk.CreatedAt }}</td>
+    </tr>
+    <tr>
+        <th>Diperbarui pada</th>
+        <td>{{ format_date .Produk.UpdatedAt }}</td>
+    </tr>
+</table>

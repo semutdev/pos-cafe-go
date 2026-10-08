@@ -1,0 +1,187 @@
+{{/* TODO_MIGRATE: if (count($cart) > 0): */}}
+    {{/* TODO_MIGRATE: $CI =& get_instance();
+    $edit_mode = $CI->session->userdata('edit_transaction_id');
+    $total_subtotal = 0;
+    $diskon_amount = 0; */}}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Pesanan {{ if .EditMode }}<span class="badge bg-warning">EDIT MODE</span>{{/* TODO_MIGRATE: endif; */}}</h5>
+        <div>
+            {{ if .EditMode }}
+            <a href="{{ site_url }}/pos/cancel_edit" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> Batal Edit
+            </a>
+            {{ end }}
+            <a href="{{ site_url }}/live/display" target="_blank" class="btn btn-sm btn-outline-success">
+                <i class="bi bi-display"></i> Live Display
+            </a>
+            <a href="#" class="btn btn-sm btn-outline-danger"
+                hx-post="{{ site_url }}/pos/kosongkan_cart/"
+                hx-target="#cart-content"
+                hx-swap="innerHTML"><i class="bi bi-x-circle"></i> Kosongkan</a>
+        </div>
+    </div>
+
+    <div id="cart-items-list" class="cart-items mb-3">
+        {{ range .Cart }}
+            {{/* TODO_MIGRATE: $count_subtotal = intval($item['jumlah']) * intval($item['harga']);
+            $subtotal = number_format($count_subtotal, 0, ',', '.');
+            $total_subtotal += $count_subtotal; */}}
+            <div class="d-flex align-items-center mb-3 cart-item">
+                <div class="flex-grow-1">
+                    <p class="mb-0 fw-bold">{{ .NamaProduk }}</p>
+                    <small class="text-muted">Rp {{/* TODO_MIGRATE: echo number_format($item['harga'], 0, ',', '.'); */}}</small>
+                </div>
+                <div class="input-group" style="width: 120px;">
+                    <button class="btn btn-outline-secondary btn-sm"
+                            type="button"
+                            hx-post="{{ site_url }}/pos/update_cart_item/{{ .ID }}"
+                            hx-vals='{"jumlah": "{{/* TODO_MIGRATE: echo $item['jumlah'] - 1; */}}"}'
+                            hx-target="#cart-content"
+                            hx-swap="innerHTML">-</button>
+                    <input type="text"
+                           class="form-control form-control-sm text-center"
+                           name="jumlah"
+                           value="{{ .Jumlah }}"
+                           hx-post="{{ site_url }}/pos/update_cart_item/{{ .ID }}"
+                           hx-trigger="change"
+                           hx-target="#cart-content"
+                           hx-swap="innerHTML">
+                    <button class="btn btn-outline-secondary btn-sm"
+                            type="button"
+                            hx-post="{{ site_url }}/pos/update_cart_item/{{ .ID }}"
+                            hx-vals='{"jumlah": "{{/* TODO_MIGRATE: echo $item['jumlah'] + 1; */}}"}'
+                            hx-target="#cart-content"
+                            hx-swap="innerHTML">+</button>
+                </div>
+                <p class="mb-0 fw-bold mx-3" style="width: 100px; text-align:right;">Rp {{ .Subtotal }}</p>
+                <button class="btn btn-sm btn-outline-danger"
+                        hx-post="{{ site_url }}/pos/remove_cart_item/{{ .ID }}"
+                        hx-target="#cart-content"
+                        hx-swap="innerHTML"
+                        hx-confirm="Anda yakin ingin menghapus item ini?">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        {{ end }}
+    </div>
+
+
+    {{/* TODO_MIGRATE: if ($cart_diskon['type'] == 'rp') {
+        $diskon_amount = $cart_diskon['value'];
+    } elseif ($cart_diskon['type'] == 'percent') {
+        $diskon_amount = $total_subtotal * ($cart_diskon['value'] / 100);
+    }
+
+    $grand_total = $total_subtotal - $diskon_amount; */}}
+
+    <div class="cart-summary border-top pt-3">
+        <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal</span>
+            <span id="subtotal" class="fw-bold">Rp {{/* TODO_MIGRATE: echo number_format($total_subtotal, 0, ',', '.'); */}}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <button class="btn btn-link p-0 text-decoration-none" data-bs-toggle="modal" data-bs-target="#discountModal">
+                <i class="bi bi-tag-fill"></i> Tambah Diskon
+            </button>
+            <span id="discount-display" class="fw-bold text-danger">- Rp {{/* TODO_MIGRATE: echo number_format($diskon_amount, 0, ',', '.'); */}}</span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between h4 fw-bold mb-3">
+            <span>TOTAL</span>
+            <span id="grand-total" class="text-primary">Rp {{/* TODO_MIGRATE: echo number_format($grand_total, 0, ',', '.'); */}}</span>
+        </div>
+
+        <div class="d-grid">
+            <button class="btn btn-primary btn-lg"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasCheckout"
+                hx-get="{{ site_url }}/pos/get_checkout_summary"
+                hx-target="#offcanvas-body-content"
+                hx-trigger="click"
+                {{ if not .Cart }}disabled{{ end }}>
+                <i class="bi bi-arrow-right-circle-fill"></i> LANJUT KE PEMBAYARAN
+            </button>
+            <!-- <button class="btn btn-primary btn-lg" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCheckout" id="btn-checkout">
+                <i class="bi bi-arrow-right-circle-fill"></i> LANJUT KE PEMBAYARAN
+            </button> -->
+        </div>
+    </div>
+{{ else }}
+    <h5 class="mb-3">Pesanan <button id="clear-cart" class="btn btn-sm btn-outline-danger float-end"><i class="bi bi-x-circle"></i> Kosongkan</button></h5>
+
+    <div id="cart-items-list" class="cart-items mb-3">
+        <div id="empty-cart-message" class="text-center text-muted mt-5">
+            <i class="bi bi-cart-x" style="font-size: 4rem;"></i>
+            <p class="mt-2">Keranjang masih kosong</p>
+        </div>
+    </div>
+
+    <div class="cart-summary border-top pt-3">
+        <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal</span>
+            <span id="subtotal" class="fw-bold">Rp 0</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <button class="btn btn-link p-0 text-decoration-none" data-bs-toggle="modal" data-bs-target="#discountModal">
+                <i class="bi bi-tag-fill"></i> Tambah Diskon
+            </button>
+            <span id="discount-display" class="fw-bold text-danger">- Rp 0</span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between h4 fw-bold mb-3">
+            <span>TOTAL</span>
+            <span id="grand-total" class="text-primary">Rp 0</span>
+        </div>
+
+        <div class="d-grid">
+            <button class="btn btn-primary btn-lg"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasCheckout"
+                hx-get="{{ site_url }}/pos/get_checkout_summary"
+                hx-target="#offcanvas-body-content"
+                hx-trigger="click"
+                {{ if not .Cart }}disabled{{ end }}>
+                <i class="bi bi-arrow-right-circle-fill"></i> LANJUT KE PEMBAYARAN
+            </button>
+            <!-- <button class="btn btn-primary btn-lg" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCheckout" id="btn-checkout">
+                <i class="bi bi-arrow-right-circle-fill"></i> LANJUT KE PEMBAYARAN
+            </button> -->
+        </div>
+    </div>
+{{ end }}
+
+<div class="modal fade" id="discountModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Berikan Diskon</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="diskon-form"
+                hx-post="{{ site_url }}/pos/set_diskon"
+                hx-target="#cart-content"
+                hx-swap="innerHTML">
+                <div class="modal-body">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="diskon_type" id="rp" value="rp" {{ if eq .CartDiskon.Type "rp" }}checked{{ end }}>
+                        <label class="form-check-label" for="rp">
+                            Rupiah
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="diskon_type" id="percent" value="percent" {{ if eq .CartDiskon.Type "percent" }}checked{{ end }}>
+                        <label class="form-check-label" for="percent">
+                            Persen
+                        </label>
+                    </div>
+                    <input type="number" class="form-control" name="diskon" placeholder="Contoh: 10" value="{{ .CartDiskon.Value }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="apply-discount">Terapkan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

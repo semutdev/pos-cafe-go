@@ -1,0 +1,68 @@
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css">
+<!--begin::App Main-->
+<main class="app-main">
+    <!--begin::App Content Header-->
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3 class="mb-0">{{ .Title }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::App Content Header-->
+    <!--begin::App Content-->
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No. Invoice</th>
+                                    <th>Tanggal</th>
+                                    <th>Kasir</th>
+                                    <th>Tipe</th>
+                                    <th>Total</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{ range .ListTransaksi }}
+                                    <tr>
+                                        <td>{{ .NoInvoice }}</td>
+                                        <td>{{/* TODO_MIGRATE: echo date('d M Y, H:i', strtotime($transaksi['tanggal'])); */}}</td>
+                                        <td>{{ .NamaKasir }}</td>
+                                        <td><span class="badge bg-{{ if eq .TipePesanan "Dine In" }}primary{{ else }}success{{ end }}">{{ .TipePesanan }}</span></td>
+                                        <td class="text-end">{{/* TODO_MIGRATE: echo number_format($transaksi['total_akhir'], 0, ',', '.'); */}}</td>
+                                        <td>
+                                            <a href="{{ site_url }}/pos/load_transaction/{{ .ID }}" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</a>
+                                            <a href="{{ site_url }}/pos/receipt/{{ .ID }}" class="btn btn-sm btn-info" target="_blank"><i class="bi bi-receipt"></i> Lihat Struk</a>
+                                        </td>
+                                    </tr>
+                                {{ end }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::App Content-->
+</main>
+<!--end::App Main-->
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $('#datatable').DataTable({
+            "responsive": true,
+            "order": [[1, 'desc']] // Urutkan berdasarkan kolom tanggal (indeks 1) secara descending
+        });
+    });
+</script>

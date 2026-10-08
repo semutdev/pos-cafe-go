@@ -1,0 +1,55 @@
+<h1>{{/* TODO_MIGRATE: echo lang('create_user_heading'); */}}</h1>
+<p>{{/* TODO_MIGRATE: echo lang('create_user_subheading'); */}}</p>
+
+<div id="infoMessage">{{ .Message }}</div>
+
+<form action="{{ site_url }}/auth/create_user" method="POST">
+
+      <p>
+            {{/* TODO_MIGRATE: echo lang('create_user_fname_label', 'first_name'); */}} <br />
+            {{/* TODO_MIGRATE: echo form_input($first_name); */}}
+      </p>
+
+      <p>
+            {{/* TODO_MIGRATE: echo lang('create_user_lname_label', 'last_name'); */}} <br />
+            {{/* TODO_MIGRATE: echo form_input($last_name); */}}
+      </p>
+      
+      {{/* TODO_MIGRATE: if($identity_column!=='email') {
+          echo '<p>';
+          echo lang('create_user_identity_label', 'identity');
+          echo '<br />';
+          echo form_error('identity');
+          echo form_input($identity);
+          echo '</p>';
+      } */}}
+
+      <p>
+            {{/* TODO_MIGRATE: echo lang('create_user_company_label', 'company'); */}} <br />
+            {{/* TODO_MIGRATE: echo form_input($company); */}}
+      </p>
+
+      <p>
+            {{/* TODO_MIGRATE: echo lang('create_user_email_label', 'email'); */}} <br />
+            {{/* TODO_MIGRATE: echo form_input($email); */}}
+      </p>
+
+      <p>
+            {{/* TODO_MIGRATE: echo lang('create_user_phone_label', 'phone'); */}} <br />
+            {{/* TODO_MIGRATE: echo form_input($phone); */}}
+      </p>
+
+      <p>
+            {{/* TODO_MIGRATE: echo lang('create_user_password_label', 'password'); */}} <br />
+            {{/* TODO_MIGRATE: echo form_input($password); */}}
+      </p>
+
+      <p>
+            {{/* TODO_MIGRATE: echo lang('create_user_password_confirm_label', 'password_confirm'); */}} <br />
+            {{/* TODO_MIGRATE: echo form_input($password_confirm); */}}
+      </p>
+
+
+      <p>{{/* TODO_MIGRATE: echo form_submit('submit', lang('create_user_submit_btn')); */}}</p>
+
+</form>

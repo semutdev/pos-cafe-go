@@ -1,0 +1,289 @@
+<script>
+$(document).ready(function() {
+    var table = $('#produk-table').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": "{{ site_url }}/admin/produk/get_data_produk",
+            "type": "POST"
+        },
+        "columns": [
+            { "data": "0", "orderable": false },
+            { "data": "1" },
+            { "data": "2" },
+            { "data": "3" },
+            { "data": "4" },
+            { "data": "5" },
+            { "data": "6" },
+            { "data": "7" },
+            { "data": "8", "orderable": false }
+        ],
+        "order": [[1, 'asc']]
+    });
+
+    // Add button click - Load form via jQuery AJAX
+    $(document).on('click', '#btn-tambah', function(e) {
+        e.preventDefault();
+        var url = '{{ site_url }}/admin/produk/tambah';
+        $('#form-modal-content').load(url, function() {
+            $('#form-modal .modal-title').text('Tambah Produk');
+        });
+    });
+
+    // Edit button click - Load form via jQuery AJAX
+    $(document).on('click', '.btn-edit', function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        var url = '{{ site_url }}/admin/produk/edit/' + id;
+
+        // Load the form into the modal
+        $('#form-modal-content').load(url, function() {
+            // The modal is already triggered by data-bs-toggle, so we don't need to show it manually.
+            // We can set the title here if we want.
+            $('#form-modal .modal-title').text('Edit Produk');
+        });
+    });
+
+    // Form submission using event delegation
+    $('#form-modal').on('submit', '#produk-form', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        // The action URL is now taken from the form's action attribute
+        var url = $(this).attr('action'); 
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                $('#form-modal').modal('hide');
+                if (response.status == 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sukses!',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    table.ajax.reload();
+                } else {
+                    // Handle validation errors
+                    if(response.errors) {
+                        var errorString = '';
+                        $.each(response.errors, function(key, value) {
+                            errorString += value + '<br>';
+                        });
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            html: errorString
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: response.message
+                        });
+                    }
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terjadi kesalahan! ' + jqXHR.responseJSON.message
+                });
+            }
+        });
+    });
+
+    // Detail button click - Load content via jQuery AJAX
+    $(document).on('click', '.btn-detail', function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        var url = '{{ site_url }}/admin/produk/detail/' + id;
+        $('#detail-modal-content').load(url, function() {
+            $('#detail-modal .modal-title').text('Detail Produk');
+        });
+    });
+
+    // Delete button click
+    $(document).on('click', '.btn-hapus', function(e) {
+        e.preventDefault();
+        var id = $(this).data('id');
+        Swal.fire({
+            title: 'Anda yakin?',
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '{{ site_url }}/admin/produk/hapus/' + id,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status == 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Dihapus!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            table.ajax.reload();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Terjadi kesalahan!'
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    // Handle check-all checkbox
+    $('#check-all').on('click', function() {
+        $('.data-check').prop('checked', this.checked);
+        toggleBulkDeleteButton();
+    });
+
+    // Handle individual checkboxes
+    $(document).on('click', '.data-check', function() {
+        if ($('.data-check:checked').length == $('.data-check').length) {
+            $('#check-all').prop('checked', true);
+        } else {
+            $('#check-all').prop('checked', false);
+        }
+        toggleBulkDeleteButton();
+    });
+
+    function toggleBulkDeleteButton() {
+        if ($('.data-check:checked').length > 0) {
+            $('#btn-bulk-delete').prop('disabled', false);
+        } else {
+            $('#btn-bulk-delete').prop('disabled', true);
+        }
+    }
+
+    // Bulk delete button click
+    $('#btn-bulk-delete').on('click', function() {
+        var ids = [];
+        $('.data-check:checked').each(function() {
+            ids.push($(this).val());
+        });
+
+        if (ids.length > 0) {
+            Swal.fire({
+                title: 'Anda yakin?',
+                text: "Data yang dipilih akan dihapus secara permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ site_url }}/admin/produk/bulk_delete',
+                        type: 'POST',
+                        data: { ids: ids },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Dihapus!',
+                                    text: response.message,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                                table.ajax.reload();
+                                $('#check-all').prop('checked', false);
+                                $('#btn-bulk-delete').prop('disabled', true);
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal!',
+                                    text: response.message
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Terjadi kesalahan saat menghapus data.'
+                            });
+                        }
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'info',
+                title: 'Tidak ada data',
+                text: 'Pilih setidaknya satu data untuk dihapus.'
+            });
+        }
+    });
+
+    // Clear modal content on hide
+    $('#form-modal').on('hidden.bs.modal', function () {
+        $(this).find('#form-modal-content').html('');
+    });
+    $('#detail-modal').on('hidden.bs.modal', function () {
+        $(this).find('#detail-modal-content').html('');
+    });
+
+    // Import form submit
+    $('#import-modal').on('submit', '#import-form', function(e){
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                $('#import-modal').modal('hide');
+                var text = response.message;
+                if (response.errors && response.errors.length) {
+                    text += "\n\nDetail:\n- " + response.errors.join("\n- ");
+                }
+                Swal.fire({ icon: 'success', title: 'Import Selesai', text: response.message });
+                table.ajax.reload();
+            },
+            error: function(jqXHR) {
+                var msg = (jqXHR.responseJSON && jqXHR.responseJSON.message) ? jqXHR.responseJSON.message : 'Terjadi kesalahan saat import';
+                Swal.fire({ icon: 'error', title: 'Gagal', text: msg });
+            }
+        });
+    });
+
+    // Reset import form when modal closed
+    $('#import-modal').on('hidden.bs.modal', function(){
+        $(this).find('#import-form')[0].reset();
+    });
+});
+</script>

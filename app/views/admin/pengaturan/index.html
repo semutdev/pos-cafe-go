@@ -1,0 +1,55 @@
+<!--begin::App Main-->
+<main class="app-main">
+    <!--begin::App Content Header-->
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3 class="mb-0">{{ .Title }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::App Content Header-->
+    <!--begin::App Content-->
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            {{/* TODO_MIGRATE: if ($this->session->flashdata('success')): */}}
+                                <div class="alert alert-success" role="alert">
+                                    {{/* TODO_MIGRATE: $this->session->flashdata('success') */}}
+                                </div>
+                            {{/* TODO_MIGRATE: endif; */}}
+                            {{/* TODO_MIGRATE: if ($this->session->flashdata('error')): */}}
+                                <div class="alert alert-danger" role="alert">
+                                    {{/* TODO_MIGRATE: $this->session->flashdata('error') */}}
+                                </div>
+                            {{/* TODO_MIGRATE: endif; */}}
+
+                            <form action="{{ site_url }}/admin/pengaturan/simpan" method="POST">
+                                <div class="mb-3">
+                                    <label for="nama_cafe" class="form-label">Nama Cafe/Resto</label>
+                                    <input type="text" class="form-control" id="nama_cafe" name="nama_cafe" value="{{/* TODO_MIGRATE: htmlspecialchars($settings['nama_cafe'] ?? '') */}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="alamat_cafe" class="form-label">Alamat</label>
+                                    <textarea class="form-control" id="alamat_cafe" name="alamat_cafe" rows="3" required>{{/* TODO_MIGRATE: htmlspecialchars($settings['alamat_cafe'] ?? '') */}}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telepon_cafe" class="form-label">Kontak Telepon</label>
+                                    <input type="text" class="form-control" id="telepon_cafe" name="telepon_cafe" value="{{/* TODO_MIGRATE: htmlspecialchars($settings['telepon_cafe'] ?? '') */}}" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::App Content-->
+</main>
+<!--end::App Main-->

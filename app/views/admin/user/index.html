@@ -1,0 +1,155 @@
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css"> -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css">
+<!--begin::App Main-->
+<main class="app-main">
+    <!--begin::App Content Header-->
+    <div class="app-content-header">
+        <!--begin::Container-->
+        <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3 class="mb-0">{{ .Title }}</h3>
+                </div>
+                <div class="col-sm-6">
+                    <button class="btn btn-primary float-end"
+                        data-bs-toggle="modal"
+                        data-bs-target="#user-modal"
+                        hx-get="{{ site_url }}/admin/user/add"
+                        hx-target="#modal-body-content">Tambah</button>
+
+                    <!-- Modal user -->
+                    <div class="modal fade" id="user-modal" tabindex="-1" aria-labelledby="addLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div id="modal-body-content"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--end::Row-->
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::App Content Header-->
+    <!--begin::App Content-->
+    <div class="app-content">
+        <!--begin::Container-->
+        <div class="container-fluid">
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{ range .ListUser }}
+                                    {{ template "/admin/user/partials/_user_row.html" . }}
+                                {{ end }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::App Content-->
+</main>
+<!--end::App Main-->
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script> -->
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function() {
+        const dt_table = $('#datatable').DataTable({
+            "responsive": true
+        })
+
+        const dt_modal = new bootstrap.Modal(document.getElementById('user-modal'))
+
+        // handle event validasi error from htmx
+        document.body.addEventListener('validation_error', function(evt) {
+            const errors = evt.detail
+
+            $.each(errors, function(key, value) {
+                // add border invalid
+                const input = $(`[name="${key}"]`)
+                input.addClass('is-invalid')
+
+                // add message invalid every input
+                const msg_feedback = `<div class="invalid-feedback d-block">${value}</div>`
+                input.closest('.mb-3').find('.feedback-container').html(msg_feedback)
+            })
+        })
+
+        // handle event user saved and update
+        document.body.addEventListener('user_saved', function(evt) {
+            // hide modal
+            dt_modal.hide();
+
+            // notifikasi sukses
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: 'Data berhasil disimpan!',
+                showConfirmButton: false,
+                timer: 1500
+            })
+
+            // refresh web
+            setTimeout(() => {
+                location.reload()
+            }, 2000);
+        })
+
+        // handle user delete
+        $(document).on('click', '.btn-delete', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+
+            Swal.fire({
+                title: 'Anda yakin?',
+                text: 'Data yang dihapus tidak dapat dikembalikan',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        dataType: "json",
+                        success: function(response) {
+                            Swal.fire(
+                                'Dihapus!',
+                                response.message,
+                                'success'
+                            )
+
+                            // refresh web
+                            setTimeout(() => {
+                                location.reload()
+                            }, 2000);
+                        }
+                    });
+                }
+            })
+        })
+    })
+</script>

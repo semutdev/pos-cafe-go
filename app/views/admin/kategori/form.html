@@ -1,0 +1,16 @@
+<form id="kategori-form" action="{{ .Action }}" enctype="multipart/form-data">
+    <div class="alert alert-danger" id="form-errors" style="display: none;"></div>
+    <input type="hidden" name="id" value="{{ .Kategori.ID }}">
+    <div class="mb-3">
+        <label for="code_kategori" class="form-label">Kode Kategori</label>
+        <input type="text" class="form-control" id="code_kategori" name="code_kategori" value="{{ .Kategori.CodeKategori }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="nama_kategori" class="form-label">Nama Kategori</label>
+        <input type="text" class="form-control" id="nama_kategori" name="nama_kategori" value="{{ .Kategori.NamaKategori }}" required>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+</form>

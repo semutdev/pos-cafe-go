@@ -1,0 +1,52 @@
+<form id="produk-form" action="{{ .Action }}" enctype="multipart/form-data">
+    <div class="alert alert-danger" id="form-errors" style="display: none;"></div>
+    <div class="mb-3">
+        <label for="code_produk" class="form-label">Kode Produk</label>
+        <input type="text" class="form-control" id="code_produk" name="code_produk" value="{{ .Produk.CodeProduk }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="nama_produk" class="form-label">Nama Produk</label>
+        <input type="text" class="form-control" id="nama_produk" name="nama_produk" value="{{ .Produk.NamaProduk }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="id_produk_kategori" class="form-label">Kategori</label>
+        <select class="form-select" id="id_produk_kategori" name="id_produk_kategori" required>
+            <option value="">Pilih Kategori</option>
+            {{ range .Kategori }}
+                <option value="{{ .ID }}" {{ if eq .ID .Produk.IDProdukKategori }}selected{{ end }}>{{ .NamaKategori }}</option>
+            {{ end }}
+        </select>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="harga" class="form-label">Harga</label>
+            <input type="number" class="form-control" id="harga" name="harga" value="{{ .Produk.Harga }}" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="stok" class="form-label">Stok</label>
+            <input type="number" class="form-control" id="stok" name="stok" value="{{ .Produk.Stok }}" required>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="deskripsi" class="form-label">Deskripsi</label>
+        <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3">{{ .Produk.Deskripsi }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="gambar" class="form-label">Gambar</label>
+        <input type="file" class="form-control" id="gambar" name="gambar">
+        {{ if .Produk.Gambar }}
+            <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah gambar.</small>
+            <img src="{{ base_url }}/uploads/produk/{{ .Produk.Gambar }}" alt="" class="img-thumbnail mt-2" width="100">
+        {{ end }}
+    </div>
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1" {{ if .Produk.IsActive }}checked{{ end }}>
+        <label class="form-check-label" for="is_active">
+            Aktif
+        </label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+</form>

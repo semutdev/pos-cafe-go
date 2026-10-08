@@ -1,0 +1,73 @@
+{{/* TODO_MIGRATE: $is_edit = isset($user);
+$action_url = $is_edit ? site_url().'/admin/user/do_edit/'.$user->id : site_url().'/admin/user/do_add/'; */}}
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="addLabel">{{ .Title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <form id="user-form"
+          action="{{ .ActionURL }}"
+          hx-post="{{ .ActionURL }}">
+    <div class="modal-body">
+        <div class="mb-3">
+            <label for="first_name">Nama</label>
+            <input type="text" class="form-control" name="nama" value="{{ if .IsEdit }}{{ .User.FirstName }}{{ end }}">
+            <div class="feedback-container"></div>
+        </div>
+        <div class="mb-3">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" name="email" value="{{ if .IsEdit }}{{ .User.Email }}{{ end }}">
+            <div class="feedback-container"></div>
+        </div>
+        <div class="mb-3">
+            <label for="phone">No WA</label>
+            <input type="text" class="form-control" name="phone" value="{{ if .IsEdit }}{{ .User.Phone }}{{ end }}">
+            <div class="feedback-container"></div>
+        </div>
+        <div class="mb-3">
+            <label for="password">Password</label>
+            <input type="text" class="form-control" name="password">
+            <div class="feedback-container"></div>
+        </div>
+        <div class="mb-3">
+            <label for="password_confirm">Konfirmasi password</label>
+            <input type="text" class="form-control" name="password_confirm">
+            <div class="feedback-container"></div>
+        </div>
+        <div class="mb-3">
+            <label for="role">Role</label>
+            {{ range .Groups }}
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="groups[]"
+                           value="{{ .ID }}"
+                           id="{{ .ID }}"
+                           {{/* TODO_MIGRATE: echo $is_edit && in_array($group, $current_groups) ? 'checked' : ''; */}}>
+                    <label class="form-check-label" for="{{ .ID }}">
+                        {{ .Name }}
+                    </label>
+                </div>
+            {{ end }}
+            <div class="feedback-container"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">
+            Simpan
+            <span class="rq-loading spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </button>
+    </div>
+    </form>
+</div>
+
+<style>
+    .rq-loading{
+        display: none;
+    }
+
+    .htmx-request .rq-loading{
+        display: inline-block;
+    }
+</style>

@@ -1,0 +1,19 @@
+<tr>
+    <td>{{ .User.FirstName }} {{ .User.LastName }}</td>
+    <td>{{ .User.Email }}</td>
+    <td>
+        {{ range .User.Groups }}
+            {{ .Name }}<br />
+        {{ end }}
+    </td>
+    <td>{{/* TODO_MIGRATE: echo ($user->active) ?  lang('index_active_link') : lang('index_inactive_link'); */}}</td>
+    <td>
+        <button class="btn btn-sm btn-info"
+                data-bs-toggle="modal"
+                data-bs-target="#user-modal"
+                hx-get="{{ site_url }}/admin/user/edit/{{ .User.ID }}"
+                hx-target="#modal-body-content">Edit
+        </button>
+        <a href="{{ site_url }}/admin/user/delete/{{ .User.ID }}" class="btn btn-sm btn-danger btn-delete">Hapus</a>
+    </td>
+</tr>

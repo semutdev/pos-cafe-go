@@ -1,0 +1,83 @@
+{{/* TODO_MIGRATE: $CI =& get_instance();
+$edit_mode = $CI->session->userdata('edit_transaction_id'); */}}
+
+<form hx-post="{{ if .EditMode }}{{ site_url }}/pos/update_transaction{{ else }}{{ site_url }}/pos/finish_transaction{{ end }}" hx-swap="none">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <h6 class="mb-3">Ringkasan Belanja</h6>
+            {{ if .EditMode }}
+            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <div>
+                    Anda sedang mengedit transaksi. Setelah selesai, data transaksi akan diperbarui.
+                </div>
+            </div>
+            {{ end }}
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between">
+                    Subtotal
+                    <span>Rp {{/* TODO_MIGRATE: number_format($subtotal, 0, '', '.') */}}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    Diskon
+                    <span class="text-danger">- Rp {{/* TODO_MIGRATE: number_format($discount_amount) */}}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between fw-bold text-primary fs-5">
+                    TOTAL BAYAR
+                    <span>Rp {{/* TODO_MIGRATE: number_format($grand_total, 0, '', '.') */}}</span>
+                </li>
+            </ul>
+            <input type="hidden" name="subtotal" value="{{ .Subtotal }}">
+            <input type="hidden" name="grand_total" value="{{ .GrandTotal }}">
+        </div>
+        <div class="col-md-6">
+            <h6 class="mb-3">Tipe Pesanan</h6>
+            <div class="row g-2 mb-3">
+                <div class="col payment-option">
+                    <input type="radio" name="tipe_pesanan" id="type-dine-in" value="Dine In" checked>
+                    <label for="type-dine-in"><i class="bi bi-cup-straw fs-4 d-block"></i>Dine In</label>
+                </div>
+                <div class="col payment-option">
+                    <input type="radio" name="tipe_pesanan" id="type-take-away" value="Take Away">
+                    <label for="type-take-away"><i class="bi bi-bag-check-fill fs-4 d-block"></i>Take Away</label>
+                </div>
+            </div>
+
+            <h6 class="mb-3">Pilih Metode Pembayaran</h6>
+            <div class="row g-2 mb-3">
+                <div class="col payment-option">
+                    <input type="radio" name="payment_method" id="pay-cash" value="cash" checked>
+                    <label for="pay-cash"><i class="bi bi-cash-coin fs-4 d-block"></i>Tunai</label>
+                </div>
+                <div class="col payment-option">
+                    <input type="radio" name="payment_method" id="pay-qris" value="qris">
+                    <label for="pay-qris"><i class="bi bi-qr-code fs-4 d-block"></i>QRIS</label>
+                </div>
+                <div class="col payment-option">
+                    <input type="radio" name="payment_method" id="pay-card" value="card">
+                    <label for="pay-card"><i class="bi bi-credit-card fs-4 d-block"></i>Kartu</label>
+                </div>
+            </div>
+
+            <div id="cash-payment-section">
+                <label for="cash-tendered-display" class="form-label">Uang Tunai Diterima</label>
+
+                <input type="text" class="form-control form-control-lg mb-2" id="cash-tendered-display"
+                       placeholder="Rp 0" autofocus value="{{/* TODO_MIGRATE: number_format($grand_total, 0, '', '.'); */}}">
+
+                <input type="hidden" id="cash-tendered-hidden" name="cash_tendered" value="{{ .GrandTotal }}">
+
+                <div class="d-flex justify-content-between">
+                    <span>Kembalian:</span>
+                    <span class="fw-bold fs-5 text-success" id="change-display">Rp 0</span>
+                </div>
+            </div>
+
+            <div class="d-grid mt-4">
+                <button class="btn btn-success btn-lg" type="submit">
+                    <i class="bi bi-check-circle-fill"></i> {{ if .EditMode }}UPDATE TRANSAKSI{{ else }}SELESAIKAN TRANSAKSI{{ end }}
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

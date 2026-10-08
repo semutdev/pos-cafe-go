@@ -1,0 +1,53 @@
+{{/* TODO_MIGRATE: $subtotal = 0;
+$total_items = 0;
+if (isset($cart) && !empty($cart)) {
+    foreach ($cart as $item) {
+        $subtotal += $item['harga'] * $item['jumlah'];
+        $total_items += $item['jumlah'];
+    }
+}
+
+$discount_amount = 0;
+if (isset($cart_diskon['type']) && $cart_diskon['type'] == 'rp') {
+    $discount_amount = $cart_diskon['value'];
+} elseif (isset($cart_diskon['type']) && $cart_diskon['type'] == 'percent') {
+    $discount_amount = $subtotal * ($cart_diskon['value'] / 100);
+}
+
+$grand_total = $subtotal - $discount_amount; */}}
+
+{{ if and .Cart .Cart }}
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Produk</th>
+                <th class="text-center">Jumlah</th>
+                <th class="text-end">Harga</th>
+                <th class="text-end">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range .Cart }}
+                <tr>
+                    <td>{{ .NamaProduk }}</td>
+                    <td class="text-center">{{ .Jumlah }}</td>
+                    <td class="text-end">Rp {{/* TODO_MIGRATE: number_format($item['harga'], 0, ',', '.') */}}</td>
+                    <td class="text-end">Rp {{/* TODO_MIGRATE: number_format($item['harga'] * $item['jumlah'], 0, ',', '.') */}}</td>
+                </tr>
+            {{ end }}
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        {{ if gt .DiscountAmount 0 }}
+            <h4>Subtotal: Rp {{/* TODO_MIGRATE: number_format($subtotal, 0, ',', '.') */}}</h4>
+            <h4>Diskon: - Rp {{/* TODO_MIGRATE: number_format($discount_amount, 0, ',', '.') */}}</h4>
+        {{ end }}
+        <h2>Total: Rp {{/* TODO_MIGRATE: number_format($grand_total > 0 ? $grand_total : 0, 0, ',', '.') */}}</h2>
+    </div>
+{{ else }}
+    <div class="text-center">
+        <h2>Menunggu Pesanan...</h2>
+        <p>Selamat data di {{ .Settings.NamaCafe }}.</p>
+    </div>
+{{ end }}

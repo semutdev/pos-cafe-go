@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+    <link rel="stylesheet" href="{{ base_url }}/assets/css/adminlte.css" />
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <style>
+        body { background-color: #f4f6f9; }
+        .customer-display-container {
+            display: flex;
+            height: 100vh;
+        }
+        .logo-section {
+            flex: 0 0 30%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .cart-section {
+            flex: 1;
+            padding: 40px;
+            background-color: #007bff;
+            color: white;
+        }
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .cart-table th, .cart-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: left;
+        }
+        .cart-table th { font-size: 1.2em; }
+        .cart-table td { font-size: 1.1em; }
+        .total-section {
+            margin-top: 30px;
+            text-align: right;
+        }
+        .total-section h2 {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="customer-display-container">
+        <div class="logo-section">
+            <h1>{{ .Settings.NamaCafe }}</h1>
+            <p>{{ .Settings.AlamatCafe }}</p>
+        </div>
+        <div class="cart-section" hx-get="{{ site_url }}/live/get_cart_data" hx-trigger="load, every 1s, cartUpdated from:body" hx-swap="innerHTML">
+            <!-- Cart content will be loaded here by htmx -->
+            <div class="text-center">
+                <h2>Menunggu Pesanan...</h2>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

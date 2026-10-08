@@ -1,0 +1,127 @@
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css">
+<!--begin::App Main-->
+<main class="app-main">
+    <!--begin::App Content Header-->
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">{{ .Title }}</h3>
+                <div class="d-flex gap-2">
+                    <div class="btn-group">
+                        <a href="{{ site_url }}/admin/laporan/penjualan?filter=today" class="btn {{ if eq .ActiveFilter "today" }}btn-primary{{ else }}btn-outline-primary{{ end }}">Hari Ini</a>
+                        <a href="{{ site_url }}/admin/laporan/penjualan?filter=this_week" class="btn {{ if eq .ActiveFilter "this_week" }}btn-primary{{ else }}btn-outline-primary{{ end }}">Minggu Ini</a>
+                        <a href="{{ site_url }}/admin/laporan/penjualan?filter=this_month" class="btn {{ if eq .ActiveFilter "this_month" }}btn-primary{{ else }}btn-outline-primary{{ end }}">Bulan Ini</a>
+                    </div>
+                    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#custom-date-filter">
+                        <i class="bi bi-calendar3"></i> Filter Kustom
+                    </button>
+                </div>
+            </div>
+            <div class="collapse mt-3" id="custom-date-filter">
+                <div class="card card-body">
+                    <form class="row g-3 align-items-center">
+                        <input type="hidden" name="filter" value="custom">
+                        <div class="col-auto">
+                            <label for="start_date" class="form-label">Tanggal Mulai</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ .StartDate }}">
+                        </div>
+                        <div class="col-auto">
+                            <label for="end_date" class="form-label">Tanggal Selesai</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ .EndDate }}">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary mt-4">Terapkan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::App Content Header-->
+    <!--begin::App Content-->
+    <div class="app-content">
+        <div class="container-fluid">
+            {{/* TODO_MIGRATE: $total_penjualan = 0;
+                $total_transaksi = count($laporan_penjualan);
+                foreach ($laporan_penjualan as $laporan) {
+                    $total_penjualan += $laporan['total_akhir'];
+                } */}}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="card text-bg-success">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Penjualan</h5>
+                            <br>
+                            <p class="card-text fs-4 fw-bold">Rp {{/* TODO_MIGRATE: number_format($total_penjualan, 0, ',', '.') */}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card text-bg-info">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Transaksi</h5>
+                            <br>
+                            <p class="card-text fs-4 fw-bold">{{ .TotalTransaksi }} Transaksi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No. Invoice</th>
+                                    <th>Tanggal</th>
+                                    <th>Kasir</th>
+                                    <th>Tipe</th>
+                                    <th>Total</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{ if .LaporanPenjualan }}
+                                    {{ range .LaporanPenjualan }}
+                                        <tr>
+                                            <td>{{ .NoInvoice }}</td>
+                                            <td>{{/* TODO_MIGRATE: date('d M Y, H:i', strtotime($transaksi['tanggal'])) */}}</td>
+                                            <td>{{ .NamaKasir }}</td>
+                                            <td><span class="badge bg-{{ if eq .TipePesanan "Dine In" }}primary{{ else }}success{{ end }}">{{ .TipePesanan }}</span></td>
+                                            <td class="text-end">Rp {{/* TODO_MIGRATE: number_format($transaksi['total_akhir'], 0, ',', '.') */}}</td>
+                                            <td>
+                                                <a href="{{ site_url }}/pos/receipt/{{ .ID }}" class="btn btn-sm btn-info" target="_blank"><i class="bi bi-receipt"></i> Lihat Struk</a>
+                                            </td>
+                                        </tr>
+                                    {{ end }}
+                                {{ else }}
+                                    <tr>
+                                        <td colspan="6" class="text-center">Tidak ada data penjualan pada periode ini.</td>
+                                    </tr>
+                                {{ end }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::App Content-->
+</main>
+<!--end::App Main-->
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+
+<script>
+    $(document).ready(function(){
+        {{/* TODO_MIGRATE: if (count($laporan_penjualan) > 0): */}}
+        $('#datatable').DataTable({
+            "responsive": true,
+            "order": [[1, 'desc']]
+        });
+        {{/* TODO_MIGRATE: endif; */}}
+    });
+</script>
